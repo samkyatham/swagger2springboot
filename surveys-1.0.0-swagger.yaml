@@ -1,0 +1,175 @@
+swagger: '2.0'
+info:
+  description: |
+    API for surveys.
+  version: 1.0.0
+  title: Surveys
+  termsOfService: contact sam 
+  contact:
+    email: sam.kyatham@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+
+paths:
+  /surveys:
+    post:
+      summary: Creates a new Survey.
+      operationId: createSurvey
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: Survey Payload Information
+        required: true
+        schema:
+          $ref: '#/definitions/Survey'
+      responses:
+        405:
+          description: Invalid input
+    get:
+      summary: Search for all surveys
+      description: Returns all surveys.
+      operationId: findAllSurveys
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: pageNumber
+        in: query
+        description: Page number of collection.
+        required: false
+        type: integer
+      - name: limit
+        in: query
+        description: Number of elements to be returned in each page.
+        required: false
+        type: integer        
+        
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Survey'
+        400:
+          description: Surveys are not found.
+  /surveys/{surveyId}:    
+    put:
+      summary: Update an existing Survey
+      operationId: updateSurvey
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: surveyId
+        in: path
+        description: Survey Id.
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: Survey payload that needs to be updated.
+        required: true
+        schema:
+          $ref: '#/definitions/Survey'
+      responses:
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Survey not found
+        405:
+          description: Validation exception
+  
+    get:
+      summary: Get Survey by SurveyId
+      operationId: findSurveyById
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: surveyId
+        in: path
+        description: Id of the survey to be searched. 
+        required: true
+        type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Survey'
+        400:
+          description: Invalid Survey ID
+        404:
+          description: Survey not found
+          
+    delete:
+      summary: Delete survey by SurveyID
+      description: Delete the survey by survey Id
+      operationId: deleteSurvey
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: surveyId
+        in: path
+        description: ID of the survey to be deleted.
+        required: true
+        type: integer
+        format: int64
+      responses:
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Survey not found
+  
+definitions:
+  Survey:
+    type: object
+    properties:
+      surveyId:
+        type: integer
+        format: int64
+      surveyName:
+        type: string
+      company:
+        type: string
+      createdBy:
+        type: string
+      status:
+        type: string
+        description: Survey Status
+        enum:
+        - created
+        - inprogress
+        - completed
+      questions:
+        type: array
+        $ref: '#/definitions/Question'
+  
+  Question:
+    type: object
+    properties:
+      questionId:
+        type: integer
+        format: int64
+      question:
+        type: string
+      answer:
+        type: string
+  
+host: virtserver.swaggerhub.com
+basePath: /samkyatham/surveys/1.0.0
+schemes:
+ - https
+ - http
